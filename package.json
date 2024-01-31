@@ -1,0 +1,25 @@
+{
+  "name": "d3canvas-networkgraph",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "path": "^0.12.7",
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "d3": "^7.8.5"
+  },
+  "author": "Thomas Brillion",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/w99910/d3canvas-networkgraph"
+  }
+}
