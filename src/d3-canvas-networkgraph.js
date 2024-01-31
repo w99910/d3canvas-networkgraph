@@ -1,4 +1,4 @@
-import { scaleOrdinal, forceLink, forceSimulation, forceCollide, forceX, forceY, create, schemeCategory10 } from 'd3';
+import { scaleOrdinal, forceLink, forceSimulation, forceManyBody, forceCollide, forceX, forceY, create, schemeCategory10 } from 'd3';
 
 export default function (data, options = {
     sticky: false,
@@ -31,12 +31,12 @@ export default function (data, options = {
     let radius = options.node.radius ?? 5;
 
     // Create a simulation with several forces.
-    let forceLink = forceLink(links).id(d => d.id);
+    let _forceLink = forceLink(links).id(d => d.id);
     if (options.link?.length) {
         forceLink.distance(options.link.length)
     }
     const simulation = forceSimulation(nodes)
-        .force("link", forceLink)
+        .force("link", _forceLink)
         .force("charge", forceManyBody())
         .force("collide", forceCollide().radius(radius * 1.5).iterations(options.iterations ?? 5))
         .force("x", forceX(width / 2))
@@ -67,7 +67,7 @@ export default function (data, options = {
             throw new TypeError('tooltip should be string')
         }
         // compute positions
-        context.font = `${radius}px serif`;
+        context.font = `20  px serif`;
         let textMetrics = context.measureText(tooltip);
         let padding = {
             top: 10,
@@ -229,7 +229,7 @@ export default function (data, options = {
             context.closePath();
             let label = node.label || options.node?.label
             if (label) {
-                context.font = `${radius}px serif`;
+                context.font = `20px serif`;
                 context.fillStyle = "black";
                 context.fillText(typeof label === 'function' ? label(node) : typeof label === 'boolean' ? node.id : label, node.x - radius / 2, node.y + radius / 2);
             }

@@ -41,13 +41,12 @@ const generateDummyData = (totalNodes, totalLinks, length = 10) => {
   return { nodes: nodes, links: links }
 }
 
-D3CanvasNetworkgraph(generateDummyData(100, 100), {
-  sticky: true,
+D3CanvasNetworkgraph(generateDummyData(1000, 1000), {
   drag: true,
   node: {
-    stroke: '#F49FBC',
-    strokeWidth: 1,
-    radius: 20,
-    tooltip: (node) => `asdf sdfwerjkjl12 3123joiup ${node.id}`,
+      stroke: '#F49FBC',
+      strokeWidth: 1,
+      radius: 10,
+      tooltip: (node) => `Lorem ipsum dolor sit amet, consecteturp ${node.id}`,
   }
 })

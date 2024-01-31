@@ -1,7 +1,8 @@
 {
   "name": "d3canvas-networkgraph",
-  "private": true,
-  "version": "0.0.1",
+  "version": "0.0.5",
+  "description": "D3 networkgraph built in HTML canvas",
+  "keywords": ["d3-networkgraph","networkgraph","networkgraph-canvas","canvas","networkgraph","fast"],
   "type": "module",
   "scripts": {
     "dev": "vite",
