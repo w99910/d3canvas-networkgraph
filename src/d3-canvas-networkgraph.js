@@ -227,7 +227,8 @@ export default function (data, options = {
             context.strokeStyle = null;
             let node = nodes[i];
 
-            context.fillStyle = color(node.id);
+            let nodeColor = node.color || options.node?.color;
+            context.fillStyle = nodeColor ? ( typeof nodeColor === 'function' ? nodeColor(node) : node) : color(node.id);
             context.beginPath();
             context.arc(node.x, node.y, radius, 0, Math.PI * 2)
             context.fill();
