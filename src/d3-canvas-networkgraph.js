@@ -67,7 +67,7 @@ export default function (data, options = {
             throw new TypeError('tooltip should be string')
         }
         // compute positions
-        context.font = `20  px serif`;
+        context.font = `20px serif`;
         let textMetrics = context.measureText(tooltip);
         let padding = {
             top: 10,
@@ -85,6 +85,10 @@ export default function (data, options = {
 
         if (rectStartingPointX < 0) {
             rectStartingPointX = 0;
+        }
+
+        if(rectStartingPointY < 0){
+            rectStartingPointY = node.y + 10 + radius; 
         }
 
         // draw rect
@@ -127,21 +131,34 @@ export default function (data, options = {
         return nearestNodes[0]
     }
 
+    const getPoint = (event) =>{
+        let rect = canvas.node().getBoundingClientRect();
+        if(event.touches) event = event.touches[0];
+        return [(event.clientX - rect.left) / (rect.right - rect.left) * width ,(event.clientY - rect.top) / (rect.bottom - rect.top) * height] ;
+    }
+
     const drag = () => {
         let mouseDown = false;
         let intersectNode = null;
-        canvas.on('mousedown', (e) => {
-            let rect = canvas.node().getBoundingClientRect();
+        canvas.on('mousedown touchstart', (e) => {
+            e.preventDefault();
             mouseDown = true;
-            let mouseX = (e.clientX - rect.left) / (rect.right - rect.left) * width;
-            let mouseY = (e.clientY - rect.top) / (rect.bottom - rect.top) * height;
+            let [mouseX, mouseY] = getPoint(e)
             let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
 
             if (nearestNode) {
                 intersectNode = nearestNode;
+                intersectNode.fx = mouseX;
+                intersectNode.fy = mouseY;
+            }
+
+            // show tooltip if it is touch event
+            if(e.touches){
+                drawTooltip(intersectNode)
             }
         })
-        canvas.on('mouseup', (e) => {
+        canvas.on('mouseup touchend', (e) => {
+            e.preventDefault();
             mouseDown = false;
             if (!e.active) simulation.alphaTarget(0);
             if (intersectNode) {
@@ -159,10 +176,9 @@ export default function (data, options = {
 
         let timeout = null;
 
-        canvas.on('mousemove', (e) => {
-            let rect = canvas.node().getBoundingClientRect();
-            let mouseX = (e.clientX - rect.left) / (rect.right - rect.left) * width;
-            let mouseY = (e.clientY - rect.top) / (rect.bottom - rect.top) * height;
+        canvas.on('touchmove mousemove', (e) => {
+            e.preventDefault();
+            let [mouseX, mouseY] = getPoint(e)
             if (!mouseDown || !intersectNode) {
                 let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
                 canvas.style('cursor', nearestNode ? 'grab' : 'auto');
@@ -180,11 +196,6 @@ export default function (data, options = {
             timeout = setTimeout(() => {
                 simulation.alphaTarget(0);
                 mouseDown = false;
-                if (!options.sticky && intersectNode) {
-                    intersectNode.fx = null;
-                    intersectNode.fy = null;
-                    intersectNode = null;
-                }
                 canvas.style('cursor', 'auto');
             }, 3000)
             canvas.style('cursor', 'grabbing');
