@@ -1,6 +1,8 @@
 # D3CanvasNetworkgraph
 
-> Blazing faster than HTML SVG based networkgraph ⚡⚡⚡⚡
+Blazing faster than HTML SVG based networkgraph ⚡⚡⚡⚡
+
+> Please note that this project is still under development. Sorry for inconvenience. 
 
 ## Demo
 
@@ -19,7 +21,7 @@ npm install d3canvas-networkgraph
 ```js
 import D3CanvasNetworkgraph from 'd3-canvas-networkgraph';
 
-D3CanvasNetworkgraph({
+D3CanvasNetworkgraph(document.querySelector('canvas-container'), {
     nodes: [{
         id: 1,
     },{

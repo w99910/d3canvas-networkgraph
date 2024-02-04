@@ -1942,16 +1942,16 @@ function wo(t) {
     for (var u, l = n.length, g, h, c, d, y, p, x = 0; x < o; ++x)
       for (g = Ft(n, _o, vo).visitAfter(a), u = 0; u < l; ++u)
         h = n[u], y = e[h.index], p = y * y, c = h.x + h.vx, d = h.y + h.vy, g.visit(_);
-    function _(N, v, w, b, A) {
-      var m = N.data, M = N.r, k = y + M;
+    function _(N, v, w, b, M) {
+      var m = N.data, A = N.r, k = y + A;
       if (m) {
         if (m.index > h.index) {
-          var $ = c - m.x - m.vx, S = d - m.y - m.vy, E = $ * $ + S * S;
-          E < k * k && ($ === 0 && ($ = L(r), E += $ * $), S === 0 && (S = L(r), E += S * S), E = (k - (E = Math.sqrt(E))) / E * i, h.vx += ($ *= E) * (k = (M *= M) / (p + M)), h.vy += (S *= E) * k, m.vx -= $ * (k = 1 - k), m.vy -= S * k);
+          var S = c - m.x - m.vx, $ = d - m.y - m.vy, E = S * S + $ * $;
+          E < k * k && (S === 0 && (S = L(r), E += S * S), $ === 0 && ($ = L(r), E += $ * $), E = (k - (E = Math.sqrt(E))) / E * i, h.vx += (S *= E) * (k = (A *= A) / (p + A)), h.vy += ($ *= E) * k, m.vx -= S * (k = 1 - k), m.vy -= $ * k);
         }
         return;
       }
-      return v > c + k || b < c - k || w > d + k || A < d - k;
+      return v > c + k || b < c - k || w > d + k || M < d - k;
     }
   }
   function a(u) {
@@ -1994,8 +1994,8 @@ function an(t) {
   }
   function h(p) {
     for (var x = 0, _ = t.length; x < l; ++x)
-      for (var N = 0, v, w, b, A, m, M, k; N < _; ++N)
-        v = t[N], w = v.source, b = v.target, A = b.x + b.vx - w.x - w.vx || L(u), m = b.y + b.vy - w.y - w.vy || L(u), M = Math.sqrt(A * A + m * m), M = (M - o[N]) / M * p * r[N], A *= M, m *= M, b.vx -= A * (k = f[N]), b.vy -= m * k, w.vx += A * (k = 1 - k), w.vy += m * k;
+      for (var N = 0, v, w, b, M, m, A, k; N < _; ++N)
+        v = t[N], w = v.source, b = v.target, M = b.x + b.vx - w.x - w.vx || L(u), m = b.y + b.vy - w.y - w.vy || L(u), A = Math.sqrt(M * M + m * m), A = (A - o[N]) / A * p * r[N], M *= A, m *= A, b.vx -= M * (k = f[N]), b.vy -= m * k, w.vx += M * (k = 1 - k), w.vy += m * k;
   }
   function c() {
     if (s) {
@@ -2104,9 +2104,9 @@ function Eo(t) {
       return arguments.length > 1 ? (p == null ? a.delete(y) : a.set(y, d(p)), n) : a.get(y);
     },
     find: function(y, p, x) {
-      var _ = 0, N = t.length, v, w, b, A, m;
+      var _ = 0, N = t.length, v, w, b, M, m;
       for (x == null ? x = 1 / 0 : x *= x, _ = 0; _ < N; ++_)
-        A = t[_], v = y - A.x, w = p - A.y, b = v * v + w * w, b < x && (m = A, x = b);
+        M = t[_], v = y - M.x, w = p - M.y, b = v * v + w * w, b < x && (m = M, x = b);
       return m;
     },
     on: function(y, p) {
@@ -2297,7 +2297,7 @@ Z.prototype = {
   }
 };
 Z.prototype;
-function Xo(t, n = {
+function Xo(t, n, e = {
   sticky: !1,
   drag: !0,
   iterations: 5,
@@ -2313,43 +2313,43 @@ function Xo(t, n = {
   }
 }) {
   var v;
-  const e = document.getElementById("app"), r = e.getBoundingClientRect(), i = r.width, o = r.height, s = Pn(Do), a = t.links.map((w) => ({ ...w })), f = t.nodes.map((w) => ({ ...w }));
-  let u = n.node.radius ?? 5, l = an(a).id((w) => w.id);
-  (v = n.link) != null && v.length && an.distance(n.link.length);
-  const g = Eo(f).force("link", l).force("charge", To()).force("collide", wo().radius(u * 1.5).iterations(n.iterations ?? 5)).force("x", Co(i / 2)).force("y", Ro(o / 2)), h = wr("canvas").attr("width", i).attr("height", o).attr("style", "max-width: 100%; height: auto;"), c = h.node().getContext("2d");
+  const r = t.getBoundingClientRect(), i = r.width, o = r.height, s = Pn(Do), a = n.links.map((w) => ({ ...w })), f = n.nodes.map((w) => ({ ...w }));
+  let u = e.node.radius ?? 5, l = an(a).id((w) => w.id);
+  (v = e.link) != null && v.length && an.distance(e.link.length);
+  const g = Eo(f).force("link", l).force("charge", To()).force("collide", wo().radius(u * 1.5).iterations(e.iterations ?? 5)).force("x", Co(i / 2)).force("y", Ro(o / 2)), h = wr("canvas").attr("width", i).attr("height", o).attr("style", "max-width: 100%; height: auto;"), c = h.node().getContext("2d");
   let d = {
     rect: null,
     text: null,
     arrow: null
   };
   const y = (w) => {
-    let b = h.node().getBoundingClientRect(), A = w.tooltip ?? n.node.tooltip;
-    if (typeof A == "function" && (A = A(w)), typeof A != "string")
+    let b = h.node().getBoundingClientRect(), M = w.tooltip ?? e.node.tooltip;
+    if (typeof M == "function" && (M = M(w)), typeof M != "string")
       throw new TypeError("tooltip should be string");
     c.font = "20px serif";
-    let m = c.measureText(A), M = {
+    let m = c.measureText(M), A = {
       top: 10,
       left: 10,
       right: 10,
       bottom: 10
-    }, k = M.left + m.width + M.right, $ = M.top + m.actualBoundingBoxAscent + m.actualBoundingBoxDescent + M.bottom, S = w.x - k / 2, E = w.y - 10 - $ - u;
-    S + k > b.width && (S = b.width - k), S < 0 && (S = 0), E < 0 && (E = w.y + 10 + u), d.rect = {
-      x: S,
+    }, k = A.left + m.width + A.right, S = A.top + m.actualBoundingBoxAscent + m.actualBoundingBoxDescent + A.bottom, $ = w.x - k / 2, E = w.y - 10 - S - u;
+    $ + k > b.width && ($ = b.width - k), $ < 0 && ($ = 0), E < 0 && (E = w.y + 10 + u), d.rect = {
+      x: $,
       y: E,
       width: k,
-      height: $
+      height: S
     }, d.arrow = {
-      x: [w.x - 5, E + $ - 2],
-      y: [w.x + 5, E + $ - 2],
+      x: [w.x - 5, E + S - 2],
+      y: [w.x + 5, E + S - 2],
       z: [w.x, w.y - u]
     }, d.text = {
-      x: S + k / 2 - m.width / 2,
-      y: E + M.top + $ / 2 - m.actualBoundingBoxDescent,
-      content: A
+      x: $ + k / 2 - m.width / 2,
+      y: E + A.top + S / 2 - m.actualBoundingBoxDescent,
+      content: M
     }, N();
   }, p = (w, b) => {
-    let A = f.map((m) => (m.d = Math.sqrt(Math.pow(w - m.x, 2) + Math.pow(b - m.y, 2)), m)).filter((m) => m.d < u);
-    return A.length === 0 ? null : (A.sort((m, M) => m.d >= M.d ? 1 : -1), A[0]);
+    let M = f.map((m) => (m.d = Math.sqrt(Math.pow(w - m.x, 2) + Math.pow(b - m.y, 2)), m)).filter((m) => m.d < u);
+    return M.length === 0 ? null : (M.sort((m, A) => m.d >= A.d ? 1 : -1), M[0]);
   }, x = (w) => {
     let b = h.node().getBoundingClientRect();
     return w.touches && (w = w.touches[0]), [(w.clientX - b.left) / (b.right - b.left) * i, (w.clientY - b.top) / (b.bottom - b.top) * o];
@@ -2357,46 +2357,46 @@ function Xo(t, n = {
     let w = !1, b = null;
     h.on("mousedown touchstart", (m) => {
       m.preventDefault(), w = !0;
-      let [M, k] = x(m), $ = p(M, k);
-      $ && (b = $, b.fx = M, b.fy = k), m.touches && y(b);
+      let [A, k] = x(m), S = p(A, k);
+      S && (b = S, b.fx = A, b.fy = k), m.touches && y(b);
     }), h.on("mouseup touchend", (m) => {
-      m.preventDefault(), w = !1, m.active || g.alphaTarget(0), b && (b.x = b.fx, b.y = b.fy), !n.sticky && b && (b.fx = null, b.fy = null, b = null);
+      m.preventDefault(), w = !1, m.active || g.alphaTarget(0), b && (b.x = b.fx, b.y = b.fy), !e.sticky && b && (b.fx = null, b.fy = null, b = null);
     });
-    let A = null;
+    let M = null;
     h.on("touchmove mousemove", (m) => {
-      var $;
+      var S;
       m.preventDefault();
-      let [M, k] = x(m);
+      let [A, k] = x(m);
       if (!w || !b) {
-        let S = p(M, k);
-        h.style("cursor", S ? "grab" : "auto"), S && (($ = n.node) != null && $.tooltip || S.tooltip) ? y(S) : (d.arrow = null, d.rect = null, d.text = null, N());
+        let $ = p(A, k);
+        h.style("cursor", $ ? "grab" : "auto"), $ && ((S = e.node) != null && S.tooltip || $.tooltip) ? y($) : (d.arrow = null, d.rect = null, d.text = null, N());
         return;
       }
-      A && clearTimeout(A), A = setTimeout(() => {
+      M && clearTimeout(M), M = setTimeout(() => {
         g.alphaTarget(0), w = !1, h.style("cursor", "auto");
-      }, 3e3), h.style("cursor", "grabbing"), d.arrow = null, d.rect = null, d.text = null, b.fx = M, b.fy = k, g.alphaTarget(0.3).restart();
+      }, 3e3), h.style("cursor", "grabbing"), d.arrow = null, d.rect = null, d.text = null, b.fx = A, b.fy = k, g.alphaTarget(0.3).restart();
     });
   };
   function N() {
-    var w, b;
+    var w, b, M;
     c.save(), c.clearRect(0, 0, i, o), c.strokeStyle = "white";
-    for (let A = 0; A <= a.length - 1; A++)
-      c.beginPath(), c.moveTo(a[A].source.x, a[A].source.y), c.lineTo(a[A].target.x, a[A].target.y), c.stroke();
-    c.lineWidth = n.node.strokeWidth ?? 1;
-    for (let A = 0; A <= f.length - 1; A++) {
+    for (let m = 0; m <= a.length - 1; m++)
+      c.beginPath(), c.moveTo(a[m].source.x, a[m].source.y), c.lineTo(a[m].target.x, a[m].target.y), c.stroke();
+    c.lineWidth = e.node.strokeWidth ?? 1;
+    for (let m = 0; m <= f.length - 1; m++) {
       c.strokeStyle = null;
-      let m = f[A];
-      c.fillStyle = s(m.id), c.beginPath(), c.arc(m.x, m.y, u, 0, Math.PI * 2), c.fill();
-      let M = m.stroke || ((w = n.node) == null ? void 0 : w.stroke);
-      M && (c.strokeStyle = typeof M == "string" ? M : "#ffffff", c.stroke()), c.closePath();
-      let k = m.label || ((b = n.node) == null ? void 0 : b.label);
-      k && (c.font = "20px serif", c.fillStyle = "black", c.fillText(typeof k == "function" ? k(m) : typeof k == "boolean" ? m.id : k, m.x - u / 2, m.y + u / 2));
+      let A = f[m], k = A.color || ((w = e.node) == null ? void 0 : w.color);
+      c.fillStyle = k ? typeof k == "function" ? k(A) : A : s(A.id), c.beginPath(), c.arc(A.x, A.y, u, 0, Math.PI * 2), c.fill();
+      let S = A.stroke || ((b = e.node) == null ? void 0 : b.stroke);
+      S && (c.strokeStyle = typeof S == "string" ? S : "#ffffff", c.stroke()), c.closePath();
+      let $ = A.label || ((M = e.node) == null ? void 0 : M.label);
+      $ && (c.font = "20px serif", c.fillStyle = "black", c.fillText(typeof $ == "function" ? $(A) : typeof $ == "boolean" ? A.id : $, A.x - u / 2, A.y + u / 2));
     }
     d.rect && (c.fillStyle = "white", c.beginPath(), c.fillRect(d.rect.x, d.rect.y, d.rect.width, d.rect.height), c.fill(), c.stroke(), c.closePath()), d.arrow && (c.fillStyle = "white", c.strokeStyle = "white", c.beginPath(), c.moveTo(d.arrow.x[0], d.arrow.x[1]), c.lineTo(d.arrow.y[0], d.arrow.y[1]), c.lineTo(d.arrow.z[0], d.arrow.z[1]), c.fill(), c.closePath()), d.text && (c.fillStyle = "black", c.fillText(d.text.content, d.text.x, d.text.y)), c.restore();
   }
   g.on("tick", () => {
     N();
-  }), (n.drag ?? !0) && _(), e.appendChild(h.node());
+  }), (e.drag ?? !0) && _(), t.appendChild(h.node());
 }
 export {
   Xo as default

@@ -41,7 +41,7 @@ const generateDummyData = (totalNodes, totalLinks, length = 10) => {
   return { nodes: nodes, links: links }
 }
 
-D3CanvasNetworkgraph(generateDummyData(1000, 1000), {
+D3CanvasNetworkgraph(document.getElementById('app'),generateDummyData(1000, 1000), {
   drag: true,
   node: {
       stroke: '#F49FBC',

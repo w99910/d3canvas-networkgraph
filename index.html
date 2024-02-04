@@ -11,7 +11,7 @@
     <div id="app" style="width: 100vw;height: 90vh; background-color: black;"></div>
 <!--    <script type="module" src="example/main.js"></script>-->
     <script type="module">
-        import D3CanvasNetworkgraph from 'https://cdn.jsdelivr.net/npm/d3canvas-networkgraph@0.0.6/dist/d3canvas-networkgraph.es.js'
+        import D3CanvasNetworkgraph from 'https://cdn.jsdelivr.net/npm/d3canvas-networkgraph@0.0.8/dist/d3canvas-networkgraph.es.js'
         const generateDummyData = (totalNodes, totalLinks, length = 10) => {
             let tnodes = [];
             let links = [];
@@ -53,7 +53,7 @@
         }
 
 
-        D3CanvasNetworkgraph(generateDummyData(1000, 1000), {
+        D3CanvasNetworkgraph(document.getElementById('app') ,generateDummyData(1000, 1000), {
             drag: true,
             node: {
                 stroke: '#F49FBC',

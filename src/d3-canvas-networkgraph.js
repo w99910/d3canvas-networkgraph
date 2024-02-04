@@ -1,6 +1,6 @@
 import { scaleOrdinal, forceLink, forceSimulation, forceManyBody, forceCollide, forceX, forceY, create, schemeCategory10 } from 'd3';
 
-export default function (data, options = {
+export default function (container, data, options = {
     sticky: false,
     drag: true,
     iterations: 5,
@@ -15,8 +15,7 @@ export default function (data, options = {
         length: null,
     }
 }) {
-    const app = document.getElementById('app');
-    const appRect = app.getBoundingClientRect();
+    const appRect = container.getBoundingClientRect();
     const width = appRect.width;
     const height = appRect.height;
 
@@ -289,5 +288,5 @@ export default function (data, options = {
         drag();
     }
 
-    app.appendChild(canvas.node());
+    container.appendChild(canvas.node());
 }
