@@ -8,6 +8,7 @@ export default defineConfig({
         // open: './example/example.html'
     },
     build: {
+        minify: true,
         lib: {
             entry: path.resolve(__dirname, "./index.js"),
             name: "D3CanvasNetworkgraph",

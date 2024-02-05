@@ -63,7 +63,7 @@ export default function (canvas, data, options = {
     const update = (data, _options = null) => {
         links = data.links;
         nodes = data.nodes;
-        if (_options.drag !== options.drag) {
+        if (_options && _options.drag !== options.drag) {
             _options.drag ? drag() : removeDrag();
         }
         if (_options && typeof _options === 'object') {
@@ -253,12 +253,10 @@ export default function (canvas, data, options = {
     }
 
     function removeDrag() {
-        if (options.drag) {
-            let canvasSelector = select(canvas);
-            canvasSelector.on('mousedown touchstart', null)
-            canvasSelector.on('mouseup touchend', null)
-            canvasSelector.on('touchmove mousemove', null)
-        }
+        let canvasSelector = select(canvas);
+        canvasSelector.on('mousedown touchstart', null)
+        canvasSelector.on('mouseup touchend', null)
+        canvasSelector.on('touchmove mousemove', null)
     }
 
     function draw() {
@@ -309,7 +307,6 @@ export default function (canvas, data, options = {
 
         }
 
-
         if (_tooltip.rect) {
             // draw rect
             context.fillStyle = 'white';
@@ -320,7 +317,6 @@ export default function (canvas, data, options = {
             context.stroke();
             context.closePath();
         }
-
 
         if (_tooltip.arrow) {
             // draw arrow
