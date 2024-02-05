@@ -1,8 +1,6 @@
 # D3CanvasNetworkgraph
 
-Blazing faster than HTML SVG based networkgraph ⚡⚡⚡⚡
-
-> Please note that this project is still under development. Sorry for inconvenience.
+Blazing faster than HTML SVG based network-graph ⚡⚡⚡⚡
 
 ## Demo
 
