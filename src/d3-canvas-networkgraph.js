@@ -63,6 +63,9 @@ export default function (canvas, data, options = {
     const update = (data, _options = null) => {
         links = data.links;
         nodes = data.nodes;
+        if (_options.drag !== options.drag) {
+            _options.drag ? drag() : removeDrag();
+        }
         if (_options && typeof _options === 'object') {
             Object.keys(_options).forEach((key) => {
                 options[key] = _options[key];
@@ -249,6 +252,15 @@ export default function (canvas, data, options = {
         })
     }
 
+    function removeDrag() {
+        if (options.drag) {
+            let canvasSelector = select(canvas);
+            canvasSelector.on('mousedown touchstart', null)
+            canvasSelector.on('mouseup touchend', null)
+            canvasSelector.on('touchmove mousemove', null)
+        }
+    }
+
     function draw() {
         context.save();
         context.clearRect(0, 0, width, height);
@@ -353,10 +365,7 @@ export default function (canvas, data, options = {
         context.clearRect(0, 0, width, height)
 
         if (options.drag) {
-            let canvasSelector = select(canvas);
-            canvasSelector.on('mousedown touchstart', null)
-            canvasSelector.on('mouseup touchend', null)
-            canvasSelector.on('touchmove mousemove', null)
+            removeDrag();
         }
     }
 
