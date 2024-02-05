@@ -1,6 +1,6 @@
 {
   "name": "d3canvas-networkgraph",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "D3 networkgraph built in HTML canvas",
   "keywords": [
     "d3-networkgraph",

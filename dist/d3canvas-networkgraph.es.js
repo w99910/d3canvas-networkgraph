@@ -2341,11 +2341,11 @@ function Oo(t, n, e = {
   const g = () => Io(u).force("link", ko(f).id((m) => m.id)).force("charge", zo()).force("center", ro(i / 2, o / 2)).force("collide", No().radius(l)).force("x", Po(i / 2)).force("y", Do(o / 2));
   s || (s = g());
   const c = t.getContext("2d"), h = (m, w = null) => {
-    f = m.links, u = m.nodes, w && w.drag !== e.drag && (w.drag ? _() : N()), w && typeof w == "object" && Object.keys(w).forEach((M) => {
+    f = m.links, u = m.nodes, N(), w && typeof w == "object" && Object.keys(w).forEach((M) => {
       e[M] = w[M];
     }), c.clearRect(0, 0, i, o), s.stop(), s = null, s = e.simulation ?? g(), s.on("tick", () => {
       v();
-    });
+    }), e.drag && _();
   };
   let y = {
     rect: null,

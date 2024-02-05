@@ -63,9 +63,7 @@ export default function (canvas, data, options = {
     const update = (data, _options = null) => {
         links = data.links;
         nodes = data.nodes;
-        if (_options && _options.drag !== options.drag) {
-            _options.drag ? drag() : removeDrag();
-        }
+        removeDrag();
         if (_options && typeof _options === 'object') {
             Object.keys(_options).forEach((key) => {
                 options[key] = _options[key];
@@ -80,6 +78,9 @@ export default function (canvas, data, options = {
         simulation.on('tick', () => {
             draw();
         })
+        if (options.drag) {
+            drag();
+        }
     }
 
 
