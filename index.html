@@ -110,6 +110,7 @@
                 createFolder(folder, object[key], key)
             } else if (object[key] !== null) {
                 folder.add(object, key).onChange((change) => {
+                    if (timeout) clearTimeout(timeout)
                     timeout = setTimeout(() => {
                         console.log(options, change)
                         networkgraph.update(generateDummyData(data.nodes, data.links), options);
