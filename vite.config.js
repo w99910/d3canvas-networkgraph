@@ -5,7 +5,7 @@ export default defineConfig({
     // omit
     server: {
         host: true,
-        // open: './example/example.html'
+        open: './example/example.html'
     },
     build: {
         lib: {

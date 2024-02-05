@@ -1,52 +1,84 @@
-import { scaleOrdinal, forceLink, forceSimulation, forceManyBody, forceCollide, forceX, forceY, create, schemeCategory10 } from 'd3';
+import {
+    scaleOrdinal,
+    forceCenter,
+    forceLink,
+    forceSimulation,
+    forceManyBody,
+    forceCollide,
+    forceX,
+    forceY,
+    schemeCategory10,
+    select
+} from 'd3';
 
-export default function (container, data, options = {
+export default function (canvas, data, options = {
     sticky: false,
     drag: true,
-    iterations: 5,
+    simulation: null,
     node: {
         stroke: true,
         radius: 10,
         strokeWidth: 1,
         label: null,
         tooltip: null,
+        tooltipFontSize: null,
+        onClick: null,
+        onHover: null,
     },
     link: {
-        length: null,
+        color: null,
     }
 }) {
-    const appRect = container.getBoundingClientRect();
-    const width = appRect.width;
-    const height = appRect.height;
+    const canvasRect = canvas.getBoundingClientRect();
+    const width = canvasRect.width;
+    const height = canvasRect.height;
+
+    canvas.setAttribute('width', width);
+    canvas.setAttribute('height', height);
+
+    let simulation = options?.simulation;
 
     // Specify the color scale.
     const color = scaleOrdinal(schemeCategory10);
 
-    // The force simulation mutates links and nodes, so create a copy
-    // so that re-evaluating this cell produces the same result.
-    const links = data.links.map(d => ({ ...d }));
-    const nodes = data.nodes.map(d => ({ ...d }));
+    let {links, nodes} = data;
 
-    let radius = options.node.radius ?? 5;
+    let radius = options.node?.radius ?? 5;
 
-    // Create a simulation with several forces.
-    let _forceLink = forceLink(links).id(d => d.id);
-    if (options.link?.length) {
-        forceLink.distance(options.link.length)
+    const createSimulation = () =>
+        forceSimulation(nodes)
+            .force("link", forceLink(links).id(d => d.id))
+            .force("charge", forceManyBody())
+            .force("center", forceCenter(width / 2, height / 2))
+            .force("collide", forceCollide().radius(radius))
+            .force("x", forceX(width / 2))
+            .force("y", forceY(height / 2))
+
+    if (!simulation) {
+        simulation = createSimulation();
     }
-    const simulation = forceSimulation(nodes)
-        .force("link", _forceLink)
-        .force("charge", forceManyBody())
-        .force("collide", forceCollide().radius(radius * 1.5).iterations(options.iterations ?? 5))
-        .force("x", forceX(width / 2))
-        .force("y", forceY(height / 2));
 
-    const canvas = create("canvas")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("style", "max-width: 100%; height: auto;");
+    const context = canvas.getContext('2d');
 
-    const context = canvas.node().getContext('2d');
+    const update = (data, _options = null) => {
+        links = data.links;
+        nodes = data.nodes;
+        if (_options && typeof _options === 'object') {
+            Object.keys(_options).forEach((key) => {
+                options[key] = _options[key];
+            })
+        }
+
+        context.clearRect(0, 0, width, height);
+        simulation.stop();
+        simulation = null;
+        simulation = options.simulation ?? createSimulation();
+
+        simulation.on('tick', () => {
+            draw();
+        })
+    }
+
 
     let _tooltip = {
         rect: null,
@@ -55,7 +87,6 @@ export default function (container, data, options = {
     };
 
     const drawTooltip = (node) => {
-        let canvasRect = canvas.node().getBoundingClientRect();
 
         // get tooltip value to compute possible width
         let tooltip = node.tooltip ?? options.node.tooltip
@@ -66,7 +97,8 @@ export default function (container, data, options = {
             throw new TypeError('tooltip should be string')
         }
         // compute positions
-        context.font = `20px serif`;
+        let fontSize = options.node?.tooltipFontSize ?? 20;
+        context.font = `${fontSize}px serif`;
         let textMetrics = context.measureText(tooltip);
         let padding = {
             top: 10,
@@ -86,8 +118,8 @@ export default function (container, data, options = {
             rectStartingPointX = 0;
         }
 
-        if(rectStartingPointY < 0){
-            rectStartingPointY = node.y + 10 + radius; 
+        if (rectStartingPointY < 0) {
+            rectStartingPointY = node.y + 10 + radius;
         }
 
         // draw rect
@@ -111,7 +143,6 @@ export default function (container, data, options = {
             y: rectStartingPointY + padding.top + rectHeight / 2 - textMetrics.actualBoundingBoxDescent,
             content: tooltip,
         }
-
         draw();
     }
 
@@ -119,8 +150,10 @@ export default function (container, data, options = {
         let nearestNodes = nodes.map((node) => {
             node.d = Math.sqrt(Math.pow(pointX - node.x, 2) + Math.pow(pointY - node.y, 2));
             return node;
+        }).filter((node, i) => {
+            let _radius = typeof radius === 'function' ? radius(node, i) : radius;
+            return node.d < _radius
         })
-            .filter((node) => node.d < radius)
 
         if (nearestNodes.length === 0) {
             return null;
@@ -130,33 +163,38 @@ export default function (container, data, options = {
         return nearestNodes[0]
     }
 
-    const getPoint = (event) =>{
-        let rect = canvas.node().getBoundingClientRect();
-        if(event.touches) event = event.touches[0];
-        return [(event.clientX - rect.left) / (rect.right - rect.left) * width ,(event.clientY - rect.top) / (rect.bottom - rect.top) * height] ;
+    const getPoint = (event) => {
+        if (event.touches) event = event.touches[0];
+        return [(event.clientX - canvasRect.left) / (canvasRect.right - canvasRect.left) * width, (event.clientY - canvasRect.top) / (canvasRect.bottom - canvasRect.top) * height];
     }
 
     const drag = () => {
         let mouseDown = false;
         let intersectNode = null;
-        canvas.on('mousedown touchstart', (e) => {
+        let canvasSelector = select(canvas)
+        canvasSelector.on('mousedown touchstart', (e) => {
             e.preventDefault();
             mouseDown = true;
             let [mouseX, mouseY] = getPoint(e)
             let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
-
             if (nearestNode) {
                 intersectNode = nearestNode;
                 intersectNode.fx = mouseX;
                 intersectNode.fy = mouseY;
+
+                if (options.node?.onClick) {
+                    options.node?.onClick(intersectNode);
+                }
             }
 
             // show tooltip if it is touch event
-            if(e.touches){
+            if (e.touches) {
                 drawTooltip(intersectNode)
             }
+
+
         })
-        canvas.on('mouseup touchend', (e) => {
+        canvasSelector.on('mouseup touchend', (e) => {
             e.preventDefault();
             mouseDown = false;
             if (!e.active) simulation.alphaTarget(0);
@@ -175,14 +213,19 @@ export default function (container, data, options = {
 
         let timeout = null;
 
-        canvas.on('touchmove mousemove', (e) => {
+        canvasSelector.on('touchmove mousemove', (e) => {
+            console.log('move');
             e.preventDefault();
             let [mouseX, mouseY] = getPoint(e)
             if (!mouseDown || !intersectNode) {
                 let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
-                canvas.style('cursor', nearestNode ? 'grab' : 'auto');
+                canvasSelector.style('cursor', nearestNode ? 'grab' : 'auto');
                 if (nearestNode && (options.node?.tooltip || nearestNode.tooltip)) {
                     drawTooltip(nearestNode)
+
+                    if (options.node?.onHover) {
+                        options.node?.onHover(nearestNode);
+                    }
                 } else {
                     _tooltip.arrow = null;
                     _tooltip.rect = null;
@@ -195,9 +238,9 @@ export default function (container, data, options = {
             timeout = setTimeout(() => {
                 simulation.alphaTarget(0);
                 mouseDown = false;
-                canvas.style('cursor', 'auto');
+                canvasSelector.style('cursor', 'auto');
             }, 3000)
-            canvas.style('cursor', 'grabbing');
+            canvasSelector.style('cursor', 'grabbing');
             _tooltip.arrow = null;
             _tooltip.rect = null;
             _tooltip.text = null;
@@ -212,11 +255,13 @@ export default function (container, data, options = {
         context.clearRect(0, 0, width, height);
 
         // draw links
-        context.strokeStyle = 'white';
         for (let i = 0; i <= links.length - 1; i++) {
+            let link = links[i];
+            let linkColor = link.color || options.link?.color;
+            context.strokeStyle = linkColor ? (typeof linkColor === 'function' ? linkColor(link) : linkColor) : 'black';
             context.beginPath();
-            context.moveTo(links[i].source.x, links[i].source.y)
-            context.lineTo(links[i].target.x, links[i].target.y)
+            context.moveTo(link.source.x, link.source.y)
+            context.lineTo(link.target.x, link.target.y)
             context.stroke()
         }
 
@@ -227,9 +272,15 @@ export default function (container, data, options = {
             let node = nodes[i];
 
             let nodeColor = node.color || options.node?.color;
-            context.fillStyle = nodeColor ? ( typeof nodeColor === 'function' ? nodeColor(node) : node) : color(node.id);
+            let nodeRadius = node.radius ?? radius;
+            if (typeof nodeRadius === 'function') {
+                nodeRadius = nodeRadius(node, i);
+            }
+            context.fillStyle = nodeColor ? (typeof nodeColor === 'function' ? nodeColor(node, i) : nodeColor) : color(node.id);
             context.beginPath();
-            context.arc(node.x, node.y, radius, 0, Math.PI * 2)
+            node.x = Math.max(nodeRadius, Math.min(width - nodeRadius, node.x))
+            node.y = Math.max(nodeRadius, Math.min(height - nodeRadius, node.y))
+            context.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2)
             context.fill();
             let stroke = node.stroke || options.node?.stroke
             if (stroke) {
@@ -240,9 +291,9 @@ export default function (container, data, options = {
             context.closePath();
             let label = node.label || options.node?.label
             if (label) {
-                context.font = `20px serif`;
+                context.font = `14px serif`;
                 context.fillStyle = "black";
-                context.fillText(typeof label === 'function' ? label(node) : typeof label === 'boolean' ? node.id : label, node.x - radius / 2, node.y + radius / 2);
+                context.fillText(typeof label === 'function' ? label(node, i) : typeof label === 'boolean' ? node.id : label, node.x - radius / 2, node.y + radius / 2);
             }
 
         }
@@ -251,8 +302,9 @@ export default function (container, data, options = {
         if (_tooltip.rect) {
             // draw rect
             context.fillStyle = 'white';
+            context.strokeStyle = 'black'
             context.beginPath();
-            context.fillRect(_tooltip.rect.x, _tooltip.rect.y, _tooltip.rect.width, _tooltip.rect.height);
+            context.rect(_tooltip.rect.x, _tooltip.rect.y, _tooltip.rect.width, _tooltip.rect.height);
             context.fill();
             context.stroke();
             context.closePath();
@@ -262,18 +314,27 @@ export default function (container, data, options = {
         if (_tooltip.arrow) {
             // draw arrow
             context.fillStyle = 'white';
-            context.strokeStyle = 'white';
             context.beginPath();
             context.moveTo(_tooltip.arrow.x[0], _tooltip.arrow.x[1]);
             context.lineTo(_tooltip.arrow.y[0], _tooltip.arrow.y[1]);
             context.lineTo(_tooltip.arrow.z[0], _tooltip.arrow.z[1]);
             context.fill();
             context.closePath();
+
+            context.beginPath();
+            context.moveTo(_tooltip.arrow.z[0], _tooltip.arrow.z[1]);
+            context.lineTo(_tooltip.arrow.x[0], _tooltip.arrow.x[1]);
+            context.moveTo(_tooltip.arrow.z[0], _tooltip.arrow.z[1]);
+            context.lineTo(_tooltip.arrow.y[0], _tooltip.arrow.y[1]);
+            context.stroke();
+            context.closePath()
         }
 
         if (_tooltip.text) {
             // draw text 
             context.fillStyle = "black";
+            let fontSize = options.node?.tooltipFontSize ?? 20;
+            context.font = `${fontSize}px serif`;
             context.fillText(_tooltip.text.content, _tooltip.text.x, _tooltip.text.y);
         }
 
@@ -288,5 +349,19 @@ export default function (container, data, options = {
         drag();
     }
 
-    container.appendChild(canvas.node());
+    const destroy = () => {
+        simulation = null;
+        context.clearRect(0, 0, width, height)
+
+        if (options.drag) {
+            let canvasSelector = select(canvas);
+            canvasSelector.on('mousedown touchstart', null)
+            canvasSelector.on('mouseup touchend', null)
+            canvasSelector.on('touchmove mousemove', null)
+        }
+    }
+
+    return {
+        update, destroy
+    }
 }
