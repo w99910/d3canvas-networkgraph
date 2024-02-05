@@ -8,12 +8,15 @@
 </head>
 
 <body style="background-color: black; height: 100vh; width: 100vw; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-<div id="app" style="width: 100vw;height: 90vh; background-color: black;"></div>
+<div id="app" style="width: 100vw;height: 90vh; background-color: black;">
+    <canvas id="canvas" style="width: 100%; height : 100%"></canvas>
+</div>
 <!--    <script type="module" src="example/main.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"></script>
 <script type="module">
     import D3CanvasNetworkgraph
-        from 'https://cdn.jsdelivr.net/npm/d3canvas-networkgraph@0.0.8/dist/d3canvas-networkgraph.es.js'
+        from 'https://cdn.jsdelivr.net/npm/d3canvas-networkgraph@0.0.9/dist/d3canvas-networkgraph.es.js'
+
 
     const generateDummyData = (totalNodes, totalLinks, length = 10) => {
         let tnodes = [];
@@ -55,18 +58,68 @@
         return {nodes: nodes, links: links}
     }
 
-
-    D3CanvasNetworkgraph(document.getElementById('app'), generateDummyData(1000, 1000), {
+    const options = {
+        sticky: false,
         drag: true,
+        simulation: null,
         node: {
-            stroke: '#F49FBC',
-            strokeWidth: 1,
+            stroke: true,
             radius: 10,
-            tooltip: (node) => `Lorem ipsum dolor sit amet, consectetur ${node.id}`,
+            strokeWidth: 1,
+            label: '',
+            tooltip: 'hello',
+            tooltipFontSize: null,
+            onClick: null,
+            onHover: null,
+        },
+        link: {
+            color: 'white',
         }
+    }
+
+    const data = {
+        nodes: 500,
+        links: 500,
+    }
+
+
+    let networkgraph = D3CanvasNetworkgraph(document.getElementById('canvas'), generateDummyData(data.nodes, data.links), options)
+
+    const gui = new dat.GUI();
+
+    let timeout = null;
+
+    gui.add(data, 'nodes', 1, 10000).step(100).onChange((change) => {
+        if (timeout) clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            networkgraph.update(generateDummyData(change, data.links), options)
+        }, 400);
+    })
+    gui.add(data, 'links', 1, 10000).step(100).onChange((change) => {
+        if (timeout) clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            networkgraph.update(generateDummyData(data.nodes, change), options);
+        }, 400);
     })
 
 
+    const createFolder = (rootFolder, object, name) => {
+        const folder = rootFolder.addFolder(name)
+        Object.keys(object).forEach((key) => {
+            if (typeof object[key] === 'object' && object[key]) {
+                createFolder(folder, object[key], key)
+            } else if (object[key] !== null) {
+                folder.add(object, key).onChange((change) => {
+                    timeout = setTimeout(() => {
+                        networkgraph.update(generateDummyData(data.nodes, data.links), options);
+                    }, 500);
+                })
+            }
+
+        })
+    }
+
+    createFolder(gui, options, 'options')
 </script>
 </body>
 

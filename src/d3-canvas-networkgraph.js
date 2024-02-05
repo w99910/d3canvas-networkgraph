@@ -21,7 +21,7 @@ export default function (canvas, data, options = {
         strokeWidth: 1,
         label: null,
         tooltip: null,
-        tooltipFontSize: null,
+        tooltipFontSize: 20,
         onClick: null,
         onHover: null,
     },
@@ -214,7 +214,6 @@ export default function (canvas, data, options = {
         let timeout = null;
 
         canvasSelector.on('touchmove mousemove', (e) => {
-            console.log('move');
             e.preventDefault();
             let [mouseX, mouseY] = getPoint(e)
             if (!mouseDown || !intersectNode) {
