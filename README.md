@@ -43,7 +43,7 @@ let networkgraph = D3CanvasNetworkgraph(document.querySelector('canvas'), {
 import D3CanvasNetworkgraph from 'd3-canvas-networkgraph';
 ```
 
-or in Vanilla HTML.[index.html](index.html) ( Don't forget to replace the latest version )
+or in Vanilla HTML.( Don't forget to replace the latest version )
 
 ```html
 
@@ -74,8 +74,9 @@ let canvasElement = document.querySelector('canvas');
 
 Data is an `Object` and should have two attributes:
 
-- nodes - An array of nodes. A node must contain `id` attribute.
-- links - An array of links. A link must contain `source` attribute and `target` attribute.
+- nodes - An array of nodes. A node must contain `id` attribute if you don't provide custom simulation.
+- links - An array of links. A link must contain `source` attribute and `target` attribute if you don't provide custom
+  simulation.
 
 - #### Example of nodes and links
 
