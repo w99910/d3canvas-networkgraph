@@ -1,5 +1,10 @@
 # D3CanvasNetworkgraph
 
+![GitHub License](https://img.shields.io/github/license/w99910/d3canvas-networkgraph)
+[![npm version](https://badge.fury.io/js/d3canvas-networkgraph.svg)](https://badge.fury.io/js/d3canvas-networkgraph)
+![NPM Downloads](https://img.shields.io/npm/dt/d3canvas-networkgraph)
+
+
 Blazing faster than HTML SVG based network-graph ⚡⚡⚡⚡
 
 ## Demo
