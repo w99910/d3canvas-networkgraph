@@ -187,7 +187,7 @@ export default function (canvas, data, options = {
                 intersectNode.fy = mouseY;
 
                 if (options.node?.onClick) {
-                    options.node?.onClick(intersectNode);
+                    options.node?.onClick(intersectNode, e);
                 }
             }
 
@@ -227,7 +227,7 @@ export default function (canvas, data, options = {
                     drawTooltip(nearestNode)
 
                     if (options.node?.onHover) {
-                        options.node?.onHover(nearestNode);
+                        options.node?.onHover(nearestNode,e);
                     }
                 } else {
                     _tooltip.arrow = null;

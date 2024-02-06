@@ -182,7 +182,7 @@ options = {
       ```js
       {
        node: {
-         onClick: (node) => alert('node is clicked') //
+         onClick: (node, event) => alert('node is clicked') //
        }
       }
       ```
@@ -193,7 +193,7 @@ options = {
      ```js
       {
         node: {
-         onHover: (node) => alert('node is hovered') //
+         onHover: (node, event) => alert('node is hovered') //
         }
       }
      ```

@@ -2391,7 +2391,7 @@ function Oo(t, n, e = {
       var T, F;
       S.preventDefault(), m = !0;
       let [k, b] = x(S), E = p(k, b);
-      E && (w = E, w.fx = k, w.fy = b, (T = e.node) != null && T.onClick && ((F = e.node) == null || F.onClick(w))), S.touches && d(w);
+      E && (w = E, w.fx = k, w.fy = b, (T = e.node) != null && T.onClick && ((F = e.node) == null || F.onClick(w, S))), S.touches && d(w);
     }), M.on("mouseup touchend", (S) => {
       S.preventDefault(), m = !1, S.active || s.alphaTarget(0), w && (w.x = w.fx, w.y = w.fy), !e.sticky && w && (w.fx = null, w.fy = null, w = null);
     });
@@ -2402,7 +2402,7 @@ function Oo(t, n, e = {
       let [k, b] = x(S);
       if (!m || !w) {
         let H = p(k, b);
-        M.style("cursor", H ? "grab" : "auto"), H && ((E = e.node) != null && E.tooltip || H.tooltip) ? (d(H), (T = e.node) != null && T.onHover && ((F = e.node) == null || F.onHover(H))) : (y.arrow = null, y.rect = null, y.text = null, v());
+        M.style("cursor", H ? "grab" : "auto"), H && ((E = e.node) != null && E.tooltip || H.tooltip) ? (d(H), (T = e.node) != null && T.onHover && ((F = e.node) == null || F.onHover(H, S))) : (y.arrow = null, y.rect = null, y.text = null, v());
         return;
       }
       A && clearTimeout(A), A = setTimeout(() => {
