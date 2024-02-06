@@ -114,6 +114,7 @@ export default function (canvas, data, options = {
         let rectHeight = padding.top + textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + padding.bottom;
         let rectStartingPointX = node.x - rectWidth / 2;
         let rectStartingPointY = node.y - 10 - rectHeight - radius;
+        let directionUpward = 1;
         if (rectStartingPointX + rectWidth > canvasRect.width) {
             rectStartingPointX = canvasRect.width - rectWidth;
         }
@@ -124,6 +125,7 @@ export default function (canvas, data, options = {
 
         if (rectStartingPointY < 0) {
             rectStartingPointY = node.y + 10 + radius;
+            directionUpward = 0;
         }
 
         // draw rect
@@ -135,9 +137,9 @@ export default function (canvas, data, options = {
         }
         // draw arrow
         _tooltip.arrow = {
-            x: [node.x - 5, rectStartingPointY + rectHeight - 2],
-            y: [node.x + 5, rectStartingPointY + rectHeight - 2],
-            z: [node.x, node.y - radius]
+            x: [node.x - 5, rectStartingPointY + directionUpward * (rectHeight - 1)],
+            y: [node.x + 5, rectStartingPointY + directionUpward * (rectHeight - 1)],
+            z: [node.x, node.y - directionUpward * radius]
         }
 
 
