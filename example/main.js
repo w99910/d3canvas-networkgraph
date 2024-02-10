@@ -68,5 +68,8 @@ setTimeout(() => {
     network.update(generateDummyData(400, 400), {
         drag: false,
         zoom: false,
+        node: {
+            radius: 5,
+        }
     })
 }, 2000)

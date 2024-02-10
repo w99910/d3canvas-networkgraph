@@ -1,5 +1,9 @@
 Major and minor changes are logged here.
 
+## v0.1.8
+
+- fix option `radius` not updated when `update` method is called.
+
 ## v0.1.7
 
 - add condition to check if 'zoom' enable or not.

@@ -90,6 +90,7 @@ export default function (canvas, data, options = {
         context.clearRect(0, 0, width, height);
         simulation.stop();
         simulation = null;
+        radius = options.node?.radius ?? 10;
         simulation = options.simulation ?? createDefaultSimulation();
 
         simulation.on('tick', () => {

@@ -2671,9 +2671,10 @@ function wu(t, e, n = {
   const d = t.getContext("2d");
   et(t).call(a);
   const _ = (A, z = null) => {
-    f = A.links, x = A.nodes, z && typeof z == "object" && Object.keys(z).forEach((T) => {
-      n[T] = z[T];
-    }), d.clearRect(0, 0, i, o), l.stop(), l = null, l = n.simulation ?? g(), l.on("tick", () => {
+    var T;
+    f = A.links, x = A.nodes, z && typeof z == "object" && Object.keys(z).forEach((R) => {
+      n[R] = z[R];
+    }), d.clearRect(0, 0, i, o), l.stop(), l = null, p = ((T = n.node) == null ? void 0 : T.radius) ?? 10, l = n.simulation ?? g(), l.on("tick", () => {
       $();
     }), n.drag && N();
   };
