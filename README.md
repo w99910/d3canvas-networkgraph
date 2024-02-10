@@ -4,12 +4,32 @@
 [![npm version](https://badge.fury.io/js/d3canvas-networkgraph.svg)](https://badge.fury.io/js/d3canvas-networkgraph)
 ![NPM Downloads](https://img.shields.io/npm/dt/d3canvas-networkgraph)
 
-
 Blazing faster than HTML SVG based network-graph ⚡⚡⚡⚡
 
 ## Demo
 
 [https://w99910.github.io/d3canvas-networkgraph/](https://w99910.github.io/d3canvas-networkgraph/)
+
+## Features
+
+- Lightweight bundle size
+- Nodes and links are rendered inside canvas.
+- Built-in tooltip rendered inside the canvas.
+- Support node `click` and `hover` events.
+- Easy to configure the chart.
+- Update the nodes and links with just one method.
+
+## Table Of Contents
+
+- [Installation](#Installation)
+- [Basic Example](#Basic-Example)
+- [Usage](#usage)
+    - [Import the library](#import-the-library)
+    - [Initialise](#initialise-graph)
+    - [Options](#options)
+- [ChangeLog](#change-log)
+- [License](#license)
+- [Conclusion](#conclusion)
 
 ## Installation
 
@@ -42,7 +62,7 @@ let networkgraph = D3CanvasNetworkgraph(document.querySelector('canvas'), {
 
 ## Usage
 
-- Import the library
+- ### Import the library
 
 ```js
 import D3CanvasNetworkgraph from 'd3-canvas-networkgraph';
@@ -58,13 +78,13 @@ or in Vanilla HTML.( Don't forget to replace the latest version )
 ...
 <script type="module">
     import D3CanvasNetworkgraph
-        from "https://cdn.jsdelivr.net/npm/d3canvas-networkgraph@{lastest-version}/dist/d3canvas-networkgraph.es.js";
+        from "https://raw.githubusercontent.com/w99910/d3canvas-networkgraph/master/dist/d3canvas-networkgraph.es.js";
 </script>
 </body>
 </html>
 ```
 
-- Initialise graph
+- ### Initialise graph
 
 ```js
 // format
@@ -102,7 +122,7 @@ let links = [{
 }]
 ```
 
-- Options
+- ### Options
   Default option values are:
 
 ```js
@@ -110,18 +130,20 @@ options = {
     sticky: false,
     drag: true,
     simulation: null,
+    zoom: false,
     node: {
-        stroke: true,
+        border: true,
         radius: 10,
-        strokeWidth: 1,
+        borderWidth: 1,
         label: null,
         tooltip: null,
-        tooltipFontSize: null,
+        tooltipFontSize: 20,
         onClick: null,
         onHover: null,
     },
     link: {
         color: null,
+        width: 1,
     }
 };
 ```
@@ -130,6 +152,7 @@ options = {
 
 - **sticky** (boolean) : specify whether dragged node should be positioned as it moves.
 - **drag** (boolean) : enable drag behavior
+- **zoom** (boolean) : enable zoom behavior
 - **simulation** (null | d3.forceSimulation): specify your own simulation. Otherwise, simulation will be created as the
   following.
   ```js
@@ -206,6 +229,9 @@ options = {
     - **color** ( string| null)
 
       Specify link color
+    - **width** ( string| null)
+
+      Specify link width
 
 ## Update and destroy the graph
 
@@ -237,6 +263,10 @@ Destroy the graph
 ```js
 networkgraph.destroy();
 ```
+
+## ChangeLog
+
+All changes are recorded [here](CHANGELOG.md).
 
 ## License
 

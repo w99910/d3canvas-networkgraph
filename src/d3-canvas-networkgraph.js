@@ -8,17 +8,20 @@ import {
     forceX,
     forceY,
     schemeCategory10,
-    select
+    select,
+    zoom
 } from 'd3';
+
 
 export default function (canvas, data, options = {
     sticky: false,
     drag: true,
     simulation: null,
+    zoom: false,
     node: {
-        stroke: true,
+        border: true,
         radius: 10,
-        strokeWidth: 1,
+        borderWidth: 1,
         label: null,
         tooltip: null,
         tooltipFontSize: 20,
@@ -27,11 +30,23 @@ export default function (canvas, data, options = {
     },
     link: {
         color: null,
+        width: 1,
     }
 }) {
     const canvasRect = canvas.getBoundingClientRect();
     const width = canvasRect.width;
     const height = canvasRect.height;
+
+    let currentTransform = {
+        k: 1,
+        x: 0,
+        y: 0,
+    };
+
+    let _zoom = zoom()
+        .scaleExtent([1, 8])
+        .translateExtent([[0, 0], [width, height]])
+
 
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
@@ -45,7 +60,7 @@ export default function (canvas, data, options = {
 
     let radius = options.node?.radius ?? 5;
 
-    const createSimulation = () =>
+    const createDefaultSimulation = () =>
         forceSimulation(nodes)
             .force("link", forceLink(links).id(d => d.id))
             .force("charge", forceManyBody())
@@ -55,15 +70,17 @@ export default function (canvas, data, options = {
             .force("y", forceY(height / 2))
 
     if (!simulation) {
-        simulation = createSimulation();
+        simulation = createDefaultSimulation();
     }
 
     const context = canvas.getContext('2d');
 
+    select(canvas).call(_zoom)
+
+
     const update = (data, _options = null) => {
         links = data.links;
         nodes = data.nodes;
-        removeDrag();
         if (_options && typeof _options === 'object') {
             Object.keys(_options).forEach((key) => {
                 options[key] = _options[key];
@@ -73,16 +90,15 @@ export default function (canvas, data, options = {
         context.clearRect(0, 0, width, height);
         simulation.stop();
         simulation = null;
-        simulation = options.simulation ?? createSimulation();
+        simulation = options.simulation ?? createDefaultSimulation();
 
         simulation.on('tick', () => {
             draw();
         })
         if (options.drag) {
-            drag();
+            listenEvents();
         }
     }
-
 
     let _tooltip = {
         rect: null,
@@ -93,6 +109,7 @@ export default function (canvas, data, options = {
     const drawTooltip = (node) => {
 
         // get tooltip value to compute possible width
+        let canvasRect = canvas.getBoundingClientRect();
         let tooltip = node.tooltip ?? options.node.tooltip
         if (typeof tooltip === 'function') {
             tooltip = tooltip(node);
@@ -170,75 +187,62 @@ export default function (canvas, data, options = {
     }
 
     const getPoint = (event) => {
+        let canvasRect = canvas.getBoundingClientRect();
         if (event.touches) event = event.touches[0];
-        return [(event.clientX - canvasRect.left) / (canvasRect.right - canvasRect.left) * width, (event.clientY - canvasRect.top) / (canvasRect.bottom - canvasRect.top) * height];
+        let pointX = (event.clientX - canvasRect.left) / (canvasRect.right - canvasRect.left) * width;
+        let pointY = (event.clientY - canvasRect.top) / (canvasRect.bottom - canvasRect.top) * height;
+        if (currentTransform) {
+            pointX = (pointX - currentTransform.x) / currentTransform.k
+            pointY = (pointY - currentTransform.y) / currentTransform.k;
+        }
+        return [pointX, pointY];
     }
 
-    const drag = () => {
+    const listenEvents = () => {
         let mouseDown = false;
-        let intersectNode = null;
+        let selectedNode = null;
         let canvasSelector = select(canvas)
-        canvasSelector.on('mousedown touchstart', (e) => {
+        let timeout = null;
+
+        _zoom.on('start', (e) => {
+            e = e.sourceEvent;
             e.preventDefault();
             mouseDown = true;
             let [mouseX, mouseY] = getPoint(e)
             let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
             if (nearestNode) {
-                intersectNode = nearestNode;
-                intersectNode.fx = mouseX;
-                intersectNode.fy = mouseY;
+                selectedNode = nearestNode;
+                selectedNode.fx = mouseX;
+                selectedNode.fy = mouseY;
 
                 if (options.node?.onClick) {
-                    options.node?.onClick(intersectNode, e);
+                    options.node?.onClick(selectedNode, e);
                 }
             }
 
             // show tooltip if it is touch event
             if (e.touches) {
-                drawTooltip(intersectNode)
+                drawTooltip(selectedNode)
             }
-
-
-        })
-        canvasSelector.on('mouseup touchend', (e) => {
-            e.preventDefault();
+        }).on('end', (e) => {
+            e = e.sourceEvent;
             mouseDown = false;
             if (!e.active) simulation.alphaTarget(0);
-            if (intersectNode) {
-                intersectNode.x = intersectNode.fx;
-                intersectNode.y = intersectNode.fy;
-            }
 
             // setting 'null' will reposition the node to the original
-            if (!options.sticky && intersectNode) {
-                intersectNode.fx = null;
-                intersectNode.fy = null;
-                intersectNode = null;
+            if (!options.sticky && selectedNode) {
+                selectedNode.fx = null;
+                selectedNode.fy = null;
+                selectedNode = null;
             }
-        })
-
-        let timeout = null;
-
-        canvasSelector.on('touchmove mousemove', (e) => {
-            e.preventDefault();
-            let [mouseX, mouseY] = getPoint(e)
-            if (!mouseDown || !intersectNode) {
-                let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
-                canvasSelector.style('cursor', nearestNode ? 'grab' : 'auto');
-                if (nearestNode && (options.node?.tooltip || nearestNode.tooltip)) {
-                    drawTooltip(nearestNode)
-
-                    if (options.node?.onHover) {
-                        options.node?.onHover(nearestNode,e);
-                    }
-                } else {
-                    _tooltip.arrow = null;
-                    _tooltip.rect = null;
-                    _tooltip.text = null;
-                    draw();
-                }
+        }).on('zoom', (e) => {
+            if (!selectedNode || !options.drag || e.sourceEvent.type === 'wheel') {
+                currentTransform = e.transform;
+                draw();
                 return;
             }
+
+            let [mouseX, mouseY] = getPoint(e.sourceEvent)
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(() => {
                 simulation.alphaTarget(0);
@@ -249,25 +253,50 @@ export default function (canvas, data, options = {
             _tooltip.arrow = null;
             _tooltip.rect = null;
             _tooltip.text = null;
-            intersectNode.fx = mouseX;
-            intersectNode.fy = mouseY;
+            selectedNode.fx = mouseX;
+            selectedNode.fy = mouseY;
             simulation.alphaTarget(0.3).restart()
         })
-    }
 
-    function removeDrag() {
-        let canvasSelector = select(canvas);
-        canvasSelector.on('mousedown touchstart', null)
-        canvasSelector.on('mouseup touchend', null)
-        canvasSelector.on('touchmove mousemove', null)
+        canvasSelector.on('mousemove touchmove', (e) => {
+            e.preventDefault();
+            if (mouseDown && selectedNode) {
+                return
+            }
+            let [mouseX, mouseY] = getPoint(e)
+            let nearestNode = getNearestNodeOnPoint(mouseX, mouseY);
+            canvasSelector.style('cursor', nearestNode ? 'grab' : 'auto');
+
+            if (nearestNode) {
+                if (options.node?.onHover) {
+                    options.node?.onHover(nearestNode, e);
+                }
+                if (options.node?.tooltip || nearestNode.tooltip) {
+                    drawTooltip(nearestNode)
+                }
+            } else {
+                _tooltip.arrow = null;
+                _tooltip.rect = null;
+                _tooltip.text = null;
+                draw();
+            }
+        })
     }
 
     function draw() {
         context.save();
         context.clearRect(0, 0, width, height);
 
+        if (currentTransform) {
+            context.translate(currentTransform.x, currentTransform.y);
+            context.scale(currentTransform.k, currentTransform.k);
+        }
+
         // draw links
         for (let i = 0; i <= links.length - 1; i++) {
+            if (options.link?.width) {
+                context.lineWidth = options.link?.width;
+            }
             let link = links[i];
             let linkColor = link.color || options.link?.color;
             context.strokeStyle = linkColor ? (typeof linkColor === 'function' ? linkColor(link) : linkColor) : 'black';
@@ -278,7 +307,7 @@ export default function (canvas, data, options = {
         }
 
         // draw nodes
-        context.lineWidth = options.node.strokeWidth ?? 1;
+        context.lineWidth = options.node?.borderWidth ?? 1;
         for (let i = 0; i <= nodes.length - 1; i++) {
             context.strokeStyle = null;
             let node = nodes[i];
@@ -294,7 +323,7 @@ export default function (canvas, data, options = {
             node.y = Math.max(nodeRadius, Math.min(height - nodeRadius, node.y))
             context.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2)
             context.fill();
-            let stroke = node.stroke || options.node?.stroke
+            let stroke = node.stroke || options.node?.border
             if (stroke) {
                 context.strokeStyle = typeof stroke === 'string' ? stroke : '#ffffff';
                 context.stroke();
@@ -354,10 +383,7 @@ export default function (canvas, data, options = {
     simulation.on("tick", () => {
         draw();
     });
-
-    if (options.drag ?? true) {
-        drag();
-    }
+    listenEvents();
 
     const destroy = () => {
         simulation = null;

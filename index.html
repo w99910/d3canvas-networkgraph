@@ -15,7 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"></script>
 <script type="module">
     import D3CanvasNetworkgraph
-        from 'https://cdn.jsdelivr.net/npm/d3canvas-networkgraph@0.1.4/dist/d3canvas-networkgraph.es.js'
+        from 'https://raw.githubusercontent.com/w99910/d3canvas-networkgraph/master/dist/d3canvas-networkgraph.es.js'
 
 
     const generateDummyData = (totalNodes, totalLinks, length = 10) => {
@@ -61,6 +61,7 @@
     const options = {
         sticky: false,
         drag: true,
+        zoom: true,
         simulation: null,
         node: {
             stroke: 'white',
@@ -74,6 +75,7 @@
         },
         link: {
             color: 'white',
+            width: 1,
         }
     }
 

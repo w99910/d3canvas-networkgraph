@@ -4,3 +4,4 @@ example
 vite.config.js
 .idea
 node_modules
+dist
