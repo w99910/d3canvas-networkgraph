@@ -316,7 +316,7 @@ export default function (canvas, data, options = {
             let node = nodes[i];
 
             let nodeColor = node.color ?? options.node?.color;
-            let nodeRadius = node.radius ?? radius;
+            let nodeRadius = node.radius ?? options.node?.radius ?? 10;
             if (typeof nodeRadius === 'function') {
                 nodeRadius = nodeRadius(node, i);
             }
