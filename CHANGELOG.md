@@ -1,5 +1,9 @@
 Major and minor changes are logged here.
 
+## v0.1.7
+
+- add condition to check if 'zoom' enable or not.
+
 ## v0.1.6
 
 - fix typo - replace "||" with "??".

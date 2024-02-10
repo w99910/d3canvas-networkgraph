@@ -2731,7 +2731,7 @@ function wu(t, e, n = {
       E = E.sourceEvent, A = !1, E.active || l.alphaTarget(0), !n.sticky && z && (z.fx = null, z.fy = null, z = null);
     }).on("zoom", (E) => {
       if (!z || !n.drag || E.sourceEvent.type === "wheel") {
-        u = E.transform, $();
+        n.zoom && (u = E.transform, $());
         return;
       }
       let [D, c] = M(E.sourceEvent);

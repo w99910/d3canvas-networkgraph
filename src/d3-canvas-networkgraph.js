@@ -237,8 +237,10 @@ export default function (canvas, data, options = {
             }
         }).on('zoom', (e) => {
             if (!selectedNode || !options.drag || e.sourceEvent.type === 'wheel') {
-                currentTransform = e.transform;
-                draw();
+                if (options.zoom) {
+                    currentTransform = e.transform;
+                    draw();
+                }
                 return;
             }
 

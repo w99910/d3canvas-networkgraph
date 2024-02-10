@@ -63,3 +63,10 @@ let network = D3CanvasNetworkgraph(canvas, data, {
         color: 'white',
     }
 });
+
+setTimeout(() => {
+    network.update(generateDummyData(400, 400), {
+        drag: false,
+        zoom: false,
+    })
+}, 2000)
