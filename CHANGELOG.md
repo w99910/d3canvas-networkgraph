@@ -1,5 +1,9 @@
 Major and minor changes are logged here.
 
+## v0.1.6
+
+- fix typo - replace "||" with "??".
+
 ## v0.1.5
 
 - rename option parameter "stroke" to "border".

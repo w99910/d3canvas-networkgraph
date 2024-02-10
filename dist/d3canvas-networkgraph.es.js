@@ -2751,17 +2751,17 @@ function wu(t, e, n = {
     d.save(), d.clearRect(0, 0, i, o), u && (d.translate(u.x, u.y), d.scale(u.k, u.k));
     for (let m = 0; m <= f.length - 1; m++) {
       (A = n.link) != null && A.width && (d.lineWidth = (z = n.link) == null ? void 0 : z.width);
-      let v = f[m], k = v.color || ((T = n.link) == null ? void 0 : T.color);
+      let v = f[m], k = v.color ?? ((T = n.link) == null ? void 0 : T.color);
       d.strokeStyle = k ? typeof k == "function" ? k(v) : k : "black", d.beginPath(), d.moveTo(v.source.x, v.source.y), d.lineTo(v.target.x, v.target.y), d.stroke();
     }
     d.lineWidth = ((R = n.node) == null ? void 0 : R.borderWidth) ?? 1;
     for (let m = 0; m <= x.length - 1; m++) {
       d.strokeStyle = null;
-      let v = x[m], k = v.color || ((E = n.node) == null ? void 0 : E.color), S = v.radius ?? p;
+      let v = x[m], k = v.color ?? ((E = n.node) == null ? void 0 : E.color), S = v.radius ?? p;
       typeof S == "function" && (S = S(v, m)), d.fillStyle = k ? typeof k == "function" ? k(v, m) : k : s(v.id), d.beginPath(), v.x = Math.max(S, Math.min(i - S, v.x)), v.y = Math.max(S, Math.min(o - S, v.y)), d.arc(v.x, v.y, S, 0, Math.PI * 2), d.fill();
-      let C = v.stroke || ((D = n.node) == null ? void 0 : D.border);
+      let C = v.stroke ?? ((D = n.node) == null ? void 0 : D.border);
       C && (d.strokeStyle = typeof C == "string" ? C : "#ffffff", d.stroke()), d.closePath();
-      let I = v.label || ((c = n.node) == null ? void 0 : c.label);
+      let I = v.label ?? ((c = n.node) == null ? void 0 : c.label);
       I && (d.font = "14px serif", d.fillStyle = "black", d.fillText(typeof I == "function" ? I(v, m) : typeof I == "boolean" ? v.id : I, v.x - p / 2, v.y + p / 2));
     }
     if (h.rect && (d.fillStyle = "white", d.strokeStyle = "black", d.beginPath(), d.rect(h.rect.x, h.rect.y, h.rect.width, h.rect.height), d.fill(), d.stroke(), d.closePath()), h.arrow && (d.fillStyle = "white", d.beginPath(), d.moveTo(h.arrow.x[0], h.arrow.x[1]), d.lineTo(h.arrow.y[0], h.arrow.y[1]), d.lineTo(h.arrow.z[0], h.arrow.z[1]), d.fill(), d.closePath(), d.beginPath(), d.moveTo(h.arrow.z[0], h.arrow.z[1]), d.lineTo(h.arrow.x[0], h.arrow.x[1]), d.moveTo(h.arrow.z[0], h.arrow.z[1]), d.lineTo(h.arrow.y[0], h.arrow.y[1]), d.stroke(), d.closePath()), h.text) {
@@ -2776,7 +2776,7 @@ function wu(t, e, n = {
   }), N(), {
     update: _,
     destroy: () => {
-      l = null, d.clearRect(0, 0, i, o), n.drag && removeDrag();
+      l = null, d.clearRect(0, 0, i, o), a = null;
     }
   };
 }

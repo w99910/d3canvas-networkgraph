@@ -68,7 +68,8 @@ let networkgraph = D3CanvasNetworkgraph(document.querySelector('canvas'), {
 import D3CanvasNetworkgraph from 'd3-canvas-networkgraph';
 ```
 
-or in Vanilla HTML.( Don't forget to replace the latest version )
+or load the library using `https://w99910.github.io/d3canvas-networkgraph/dist/d3canvas-networkgraph.es.js` in Vanilla
+HTML.
 
 ```html
 
@@ -78,7 +79,7 @@ or in Vanilla HTML.( Don't forget to replace the latest version )
 ...
 <script type="module">
     import D3CanvasNetworkgraph
-        from "https://raw.githubusercontent.com/w99910/d3canvas-networkgraph/master/dist/d3canvas-networkgraph.es.js";
+        from "https://w99910.github.io/d3canvas-networkgraph/dist/d3canvas-networkgraph.es.js";
 </script>
 </body>
 </html>

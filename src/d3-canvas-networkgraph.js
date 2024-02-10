@@ -298,7 +298,7 @@ export default function (canvas, data, options = {
                 context.lineWidth = options.link?.width;
             }
             let link = links[i];
-            let linkColor = link.color || options.link?.color;
+            let linkColor = link.color ?? options.link?.color;
             context.strokeStyle = linkColor ? (typeof linkColor === 'function' ? linkColor(link) : linkColor) : 'black';
             context.beginPath();
             context.moveTo(link.source.x, link.source.y)
@@ -312,7 +312,7 @@ export default function (canvas, data, options = {
             context.strokeStyle = null;
             let node = nodes[i];
 
-            let nodeColor = node.color || options.node?.color;
+            let nodeColor = node.color ?? options.node?.color;
             let nodeRadius = node.radius ?? radius;
             if (typeof nodeRadius === 'function') {
                 nodeRadius = nodeRadius(node, i);
@@ -323,20 +323,18 @@ export default function (canvas, data, options = {
             node.y = Math.max(nodeRadius, Math.min(height - nodeRadius, node.y))
             context.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2)
             context.fill();
-            let stroke = node.stroke || options.node?.border
+            let stroke = node.stroke ?? options.node?.border
             if (stroke) {
                 context.strokeStyle = typeof stroke === 'string' ? stroke : '#ffffff';
                 context.stroke();
             }
-
             context.closePath();
-            let label = node.label || options.node?.label
+            let label = node.label ?? options.node?.label
             if (label) {
                 context.font = `14px serif`;
                 context.fillStyle = "black";
                 context.fillText(typeof label === 'function' ? label(node, i) : typeof label === 'boolean' ? node.id : label, node.x - radius / 2, node.y + radius / 2);
             }
-
         }
 
         if (_tooltip.rect) {
@@ -388,10 +386,7 @@ export default function (canvas, data, options = {
     const destroy = () => {
         simulation = null;
         context.clearRect(0, 0, width, height)
-
-        if (options.drag) {
-            removeDrag();
-        }
+        _zoom = null;
     }
 
     return {
