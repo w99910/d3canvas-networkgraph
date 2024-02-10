@@ -22,12 +22,12 @@ Blazing faster than HTML SVG based network-graph ⚡⚡⚡⚡
 ## Table Of Contents
 
 - [Installation](#Installation)
-- [Basic Example](#Basic-Example)
+- [Basic Example](#basic-example)
 - [Usage](#usage)
     - [Import the library](#import-the-library)
     - [Initialise](#initialise-graph)
     - [Options](#options)
-- [ChangeLog](#change-log)
+- [ChangeLog](#changelog)
 - [License](#license)
 - [Conclusion](#conclusion)
 
