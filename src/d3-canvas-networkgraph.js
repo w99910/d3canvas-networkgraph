@@ -18,11 +18,17 @@ export default function (canvas, data, options = {
     drag: true,
     simulation: null,
     zoom: false,
+    events: {
+        onZoom: null,
+        onResize: null,
+    },
     node: {
         border: true,
         radius: 10,
         borderWidth: 1,
         label: null,
+        labelFontSize: 14,
+        labelColor: null,
         tooltip: null,
         tooltipFontSize: 20,
         onClick: null,
@@ -34,8 +40,8 @@ export default function (canvas, data, options = {
     }
 }) {
     const canvasRect = canvas.getBoundingClientRect();
-    const width = canvasRect.width;
-    const height = canvasRect.height;
+    let width = canvasRect.width;
+    let height = canvasRect.height;
 
     let currentTransform = {
         k: 1,
@@ -56,7 +62,7 @@ export default function (canvas, data, options = {
     // Specify the color scale.
     const color = scaleOrdinal(schemeCategory10);
 
-    let {links, nodes} = data;
+    let { links, nodes } = data;
 
     let radius = options.node?.radius ?? 5;
 
@@ -157,7 +163,7 @@ export default function (canvas, data, options = {
         // draw arrow
         _tooltip.arrow = {
             x: [node.x - 5 / currentTransform.k, rectStartingPointY + directionUpward * (rectHeight - 1 / currentTransform.k)],
-            y: [node.x + 5 / currentTransform.k , rectStartingPointY + directionUpward * (rectHeight - 1 / currentTransform.k)],
+            y: [node.x + 5 / currentTransform.k, rectStartingPointY + directionUpward * (rectHeight - 1 / currentTransform.k)],
             z: [node.x, node.y - directionUpward * radius]
         }
 
@@ -241,6 +247,9 @@ export default function (canvas, data, options = {
             if (!selectedNode || !options.drag || e.sourceEvent.type === 'wheel') {
                 if (options.zoom) {
                     currentTransform = e.transform;
+                    if (options?.events?.onZoom) {
+                        options.events.onZoom(e)
+                    }
                     draw();
                 }
                 return;
@@ -335,8 +344,9 @@ export default function (canvas, data, options = {
             context.closePath();
             let label = node.label ?? options.node?.label
             if (label) {
-                context.font = `14px serif`;
-                context.fillStyle = "black";
+                let fontSize = options?.node?.labelFontSize ?? 14;
+                context.font = `${fontSize}px serif`;
+                context.fillStyle = options?.node?.labelColor ?? "black";
                 context.fillText(typeof label === 'function' ? label(node, i) : typeof label === 'boolean' ? node.id : label, node.x - radius / 2, node.y + radius / 2);
             }
         }
@@ -377,7 +387,7 @@ export default function (canvas, data, options = {
             // draw text 
             context.fillStyle = "black";
             let fontSize = options.node?.tooltipFontSize ?? 20;
-            context.font = `${fontSize / currentTransform.k }px serif`;
+            context.font = `${fontSize / currentTransform.k}px serif`;
             context.fillText(_tooltip.text.content, _tooltip.text.x, _tooltip.text.y);
         }
 
@@ -388,6 +398,39 @@ export default function (canvas, data, options = {
         draw();
     });
     listenEvents();
+
+    let windowResizeTimeout = null;
+
+    window.addEventListener('resize', (e) => {
+        const canvasRect = canvas.getBoundingClientRect();
+
+        width = canvasRect.width;
+        height = canvasRect.height;
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        if (windowResizeTimeout) clearTimeout(windowResizeTimeout);
+
+        windowResizeTimeout = setTimeout(() => {
+            _zoom = zoom()
+                .scaleExtent([1, 8])
+                .translateExtent([[0, 0], [width, height]])
+
+
+            // update default simulation if user does not provide
+            if (!options.simulation) {
+                simulation
+                    .force("x", forceX(width / 2))
+                    .force("y", forceY(height / 2))
+                    .force("center", forceCenter(width / 2, height / 2))
+                    .alpha(0.3)
+                    .restart()
+            }
+
+            if (options?.events?.onResize) {
+                options.events.onResize(e);
+            }
+        }, 200);
+    })
 
     const destroy = () => {
         simulation = null;

@@ -60,7 +60,6 @@ let network = D3CanvasNetworkgraph(canvas, data, {
     drag: true,
     zoom: true,
     sticky: false,
-    simulation: simulation,
     node: {
         border: '#F49FBC',
         borderWidth: 0.2,

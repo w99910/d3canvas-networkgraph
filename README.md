@@ -132,11 +132,17 @@ options = {
     drag: true,
     simulation: null,
     zoom: false,
+    events: {
+        onZoom: null,
+        onResize: null,
+    },
     node: {
         border: true,
         radius: 10,
         borderWidth: 1,
         label: null,
+        labelFontSize: 14,
+        labelColor: null,
         tooltip: null,
         tooltipFontSize: 20,
         onClick: null,
@@ -165,6 +171,23 @@ options = {
     .force("x", forceX(width / 2))
     .force("y", forceY(height / 2))
   ```
+- events
+    - **onZoom** (Function | null)
+
+    Trigger on zoom
+
+    - **onResize** ( Function| null)
+
+    Trigger on resize. Recalculate default simulation when window resizes and custom simulation is not provided. 
+    If you use custom simulation, you must recalculate the option and reheat. for example., 
+
+    ```js
+    simulation.force("x", forceX(width / 2))
+              .force("y", forceY(height / 2))
+              .force("center", forceCenter(width / 2, height / 2))
+              .alpha(0.3)
+              .restart()
+    ```  
 - node:
     - **stroke** (boolean| string| null)
 
@@ -190,6 +213,14 @@ options = {
       ```
       Boolean value `true` will create index of the node as label.
       Specifying `label` attribute on `node` object will overwrite this option.
+    - **labelFontSize** (null | int)
+
+      Specify font size of label. Default is `14`.
+
+    - **labelColor** ( null | string)
+
+      Specify label color. Default is `black`.
+        
     - **tooltip** ( Function| null )
 
       Enable tooltip when the node is hovered.

@@ -1,5 +1,11 @@
 Major and minor changes are logged here.
 
+## v0.2.0
+
+- Added `window` resize event ,and recalculate default simulation when window resizes and custom simulation is not provided. 
+- Added `events.onResize` and `events.onZoom` options.
+- Added `node.labelColor` and `node.labelFontSize` option.
+
 ## v0.1.9
 
 - adjust tooltip scale when zoom is triggered.
