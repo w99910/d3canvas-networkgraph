@@ -37,6 +37,12 @@ Blazing faster than HTML SVG based network-graph ⚡⚡⚡⚡
 npm install d3canvas-networkgraph
 ```
 
+## Updating
+
+```bash
+
+```
+
 ## Basic Example
 
 ```js
@@ -276,7 +282,7 @@ options = {
 
       Specify link width
 
-## Update and destroy the graph
+## Update the graph
 
 You can update the nodes and links by passing as first parameter in `update` function and options as `second` parameter.
 
@@ -301,7 +307,14 @@ networkgraph.update({
 }, options)
 ```
 
-Destroy the graph
+If you want to just update the options, you can pass the first parameter as `null`.
+
+```js
+// Just update options
+networkgraph.update(null, options)
+```
+
+### Destroy the graph
 
 ```js
 networkgraph.destroy();

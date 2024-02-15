@@ -85,26 +85,35 @@ export default function (canvas, data, options = {
     select(canvas).call(_zoom)
 
 
-    const update = (data, _options = null) => {
-        links = data.links;
-        nodes = data.nodes;
+    const update = (data = null, _options = null) => {
         if (_options && typeof _options === 'object') {
             Object.keys(_options).forEach((key) => {
                 options[key] = _options[key];
             })
         }
 
-        context.clearRect(0, 0, width, height);
-        simulation.stop();
-        simulation = null;
         radius = options.node?.radius ?? 10;
-        simulation = options.simulation ?? createDefaultSimulation();
 
-        simulation.on('tick', () => {
+        const reinitialiseSimulation = () => {
+            context.clearRect(0, 0, width, height);
+            simulation.stop();
+            simulation = null;
+            simulation = options.simulation ?? createDefaultSimulation();
+
+            simulation.on('tick', () => {
+                draw();
+            })
+        }
+
+        if (data) {
+            links = data.links;
+            nodes = data.nodes;
+
+            reinitialiseSimulation();
+        } else if (_options.simulation) {
+            reinitialiseSimulation();
+        } else {
             draw();
-        })
-        if (options.drag) {
-            listenEvents();
         }
     }
 
