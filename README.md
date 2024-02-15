@@ -147,6 +147,7 @@ options = {
         tooltipFontSize: 20,
         onClick: null,
         onHover: null,
+        onDrag: null,
     },
     link: {
         color: null,
@@ -254,6 +255,16 @@ options = {
       {
         node: {
          onHover: (node, event) => alert('node is hovered') //
+        }
+      }
+     ```
+     - **onDrag** ( Function| null)
+
+      a callback when node is dragged
+     ```js
+      {
+        node: {
+         onDrag: (node, event, { mouseX, mouseY }) => alert('node is dragged') //
         }
       }
      ```

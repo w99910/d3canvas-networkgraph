@@ -1,5 +1,9 @@
 Major and minor changes are logged here.
 
+## v0.2.1
+
+- Added `node.onDrag` event listener option.
+
 ## v0.2.0
 
 - Added `window` resize event ,and recalculate default simulation when window resizes and custom simulation is not provided. 

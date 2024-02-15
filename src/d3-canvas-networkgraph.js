@@ -33,6 +33,7 @@ export default function (canvas, data, options = {
         tooltipFontSize: 20,
         onClick: null,
         onHover: null,
+        onDrag: null,
     },
     link: {
         color: null,
@@ -268,7 +269,11 @@ export default function (canvas, data, options = {
             _tooltip.text = null;
             selectedNode.fx = mouseX;
             selectedNode.fy = mouseY;
-            simulation.alphaTarget(0.3).restart()
+            simulation.alphaTarget(0.3).restart();
+
+            if (options?.node?.onDrag) {
+                options.node.onDrag(selectedNode, e, { mouseX, mouseY })
+            }
         })
 
         canvasSelector.on('mousemove touchmove', (e) => {
