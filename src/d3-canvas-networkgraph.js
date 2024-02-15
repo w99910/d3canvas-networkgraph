@@ -120,18 +120,19 @@ export default function (canvas, data, options = {
         }
         // compute positions
         let fontSize = options.node?.tooltipFontSize ?? 20;
-        context.font = `${fontSize}px serif`;
+        context.font = `${fontSize / currentTransform.k}px serif`;
         let textMetrics = context.measureText(tooltip);
+        let paddingValue = 10 / currentTransform.k;
         let padding = {
-            top: 10,
-            left: 10,
-            right: 10,
-            bottom: 10,
+            top: 10 / currentTransform.k,
+            left: 10 / currentTransform.k,
+            right: 10 / currentTransform.k,
+            bottom: 10 / currentTransform.k,
         }
         let rectWidth = padding.left + textMetrics.width + padding.right;
         let rectHeight = padding.top + textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + padding.bottom;
         let rectStartingPointX = node.x - rectWidth / 2;
-        let rectStartingPointY = node.y - 10 - rectHeight - radius;
+        let rectStartingPointY = node.y - paddingValue - rectHeight - radius;
         let directionUpward = 1;
         if (rectStartingPointX + rectWidth > canvasRect.width) {
             rectStartingPointX = canvasRect.width - rectWidth;
@@ -142,7 +143,7 @@ export default function (canvas, data, options = {
         }
 
         if (rectStartingPointY < 0) {
-            rectStartingPointY = node.y + 10 + radius;
+            rectStartingPointY = node.y + paddingValue + radius;
             directionUpward = 0;
         }
 
@@ -155,8 +156,8 @@ export default function (canvas, data, options = {
         }
         // draw arrow
         _tooltip.arrow = {
-            x: [node.x - 5, rectStartingPointY + directionUpward * (rectHeight - 1)],
-            y: [node.x + 5, rectStartingPointY + directionUpward * (rectHeight - 1)],
+            x: [node.x - 5 / currentTransform.k, rectStartingPointY + directionUpward * (rectHeight - 1 / currentTransform.k)],
+            y: [node.x + 5 / currentTransform.k , rectStartingPointY + directionUpward * (rectHeight - 1 / currentTransform.k)],
             z: [node.x, node.y - directionUpward * radius]
         }
 
@@ -298,7 +299,7 @@ export default function (canvas, data, options = {
         // draw links
         for (let i = 0; i <= links.length - 1; i++) {
             if (options.link?.width) {
-                context.lineWidth = options.link?.width;
+                context.lineWidth = options.link?.width / currentTransform.k;
             }
             let link = links[i];
             let linkColor = link.color ?? options.link?.color;
@@ -343,7 +344,8 @@ export default function (canvas, data, options = {
         if (_tooltip.rect) {
             // draw rect
             context.fillStyle = 'white';
-            context.strokeStyle = 'black'
+            context.strokeStyle = 'black';
+            context.lineWidth = 1 / currentTransform.k;
             context.beginPath();
             context.rect(_tooltip.rect.x, _tooltip.rect.y, _tooltip.rect.width, _tooltip.rect.height);
             context.fill();
@@ -353,6 +355,7 @@ export default function (canvas, data, options = {
 
         if (_tooltip.arrow) {
             // draw arrow
+            context.lineWidth = 1 / currentTransform.k;
             context.fillStyle = 'white';
             context.beginPath();
             context.moveTo(_tooltip.arrow.x[0], _tooltip.arrow.x[1]);
@@ -374,7 +377,7 @@ export default function (canvas, data, options = {
             // draw text 
             context.fillStyle = "black";
             let fontSize = options.node?.tooltipFontSize ?? 20;
-            context.font = `${fontSize}px serif`;
+            context.font = `${fontSize / currentTransform.k }px serif`;
             context.fillText(_tooltip.text.content, _tooltip.text.x, _tooltip.text.y);
         }
 

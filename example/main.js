@@ -2,7 +2,8 @@ import './style.css'
 import D3CanvasNetworkgraph from '../src/d3-canvas-networkgraph';
 import * as d3 from 'd3'
 import {renderInCanvas} from "../src/renderInCanvas.js";
-import {create, forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY} from "d3";
+import {create, forceCenter, forceCollide, forceLink, forceManyBody, forceX, forceY} from "d3";
+import forceSimulation from './d3-custom-forcesimulation.js'
 
 const generateDummyData = (totalNodes, totalLinks, length = 10) => {
     let tnodes = [];
@@ -46,10 +47,20 @@ const generateDummyData = (totalNodes, totalLinks, length = 10) => {
 
 const data = generateDummyData(500, 500);
 const canvas = document.querySelector('canvas');
+const width = canvas.getBoundingClientRect().width;
+const height = canvas.getBoundingClientRect().height;
+let simulation = forceSimulation(data.nodes)
+    .force("link", forceLink(data.links).id(d => d.id))
+    .force("charge", forceManyBody())
+    .force("center", forceCenter(width / 2, height / 2))
+    .force("collide", forceCollide().radius(8))
+    .force("x", forceX(width / 2))
+    .force("y", forceY(height / 2));
 let network = D3CanvasNetworkgraph(canvas, data, {
     drag: true,
     zoom: true,
     sticky: false,
+    simulation: simulation,
     node: {
         border: '#F49FBC',
         borderWidth: 0.2,
@@ -63,13 +74,3 @@ let network = D3CanvasNetworkgraph(canvas, data, {
         color: 'white',
     }
 });
-
-setTimeout(() => {
-    network.update(generateDummyData(400, 400), {
-        drag: false,
-        zoom: false,
-        node: {
-            radius: 5,
-        }
-    })
-}, 2000)

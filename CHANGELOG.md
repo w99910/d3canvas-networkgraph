@@ -1,5 +1,9 @@
 Major and minor changes are logged here.
 
+## v0.1.9
+
+- adjust tooltip scale when zoom is triggered.
+
 ## v0.1.8
 
 - fix option `radius` not updated when `update` method is called.
