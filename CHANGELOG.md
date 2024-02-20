@@ -1,5 +1,10 @@
 Major and minor changes are logged here.
 
+## v0.2.4
+
+- Make `zoom` extent configurable.
+- Update `README.md`.
+
 ## v0.2.3
 
 - Added `node.color` option. 

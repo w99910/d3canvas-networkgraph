@@ -51,9 +51,22 @@ export default function (canvas, data, options = {
         y: 0,
     };
 
+
+    let scaleExtent = [1,8];
+    let translateExtent = [[0,0], [width, height]];
+
+    if(options.zoom){
+        if(options.zoom.scaleExtent){
+            scaleExtent = options.zoom.scaleExtent;
+        }
+        if(options.zoom.translateExtent){
+            translateExtent = options.zoom.translateExtent;
+        }
+    }
+
     let _zoom = zoom()
-        .scaleExtent([1, 8])
-        .translateExtent([[0, 0], [width, height]])
+        .scaleExtent(scaleExtent)
+        .translateExtent(translateExtent)
 
 
     canvas.setAttribute('width', width);

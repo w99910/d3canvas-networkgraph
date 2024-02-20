@@ -209,7 +209,19 @@ options = {
 
 - **sticky** (boolean) : specify whether dragged node should be positioned as it moves.
 - **drag** (boolean) : enable drag behavior
-- **zoom** (boolean) : enable zoom behavior
+- **zoom** (boolean| Object) : enable zoom behavior
+  
+  You can provide `scaleExtent` ( default: `[1,8]`) and `translateExtent` ( default: `[[0,0], [width, height]]`) to control zoom extents.
+  ```js
+  options = {
+    ...
+    zoom: {
+      scaleExtent: [1,4],
+      translateExtent: [[-100,-100], [canvasWidth + 100, canvasHeight + 100]],
+    }
+    ...
+  }
+  ```
 - **simulation** (null | d3.forceSimulation): specify your own simulation. Otherwise, simulation will be created as the
   following.
   ```js
