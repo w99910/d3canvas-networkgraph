@@ -23,6 +23,7 @@ export default function (canvas, data, options = {
         onResize: null,
     },
     node: {
+        color: null,
         border: true,
         radius: 10,
         borderWidth: 1,
@@ -321,10 +322,11 @@ export default function (canvas, data, options = {
 
         // draw links
         for (let i = 0; i <= links.length - 1; i++) {
-            if (options.link?.width) {
+            let link = links[i];
+            let linkWidth = link.width ?? options?.link?.width;
+            if (linkWidth) {
                 context.lineWidth = options.link?.width / currentTransform.k;
             }
-            let link = links[i];
             let linkColor = link.color ?? options.link?.color;
             context.strokeStyle = linkColor ? (typeof linkColor === 'function' ? linkColor(link) : linkColor) : 'black';
             context.beginPath();
@@ -350,7 +352,7 @@ export default function (canvas, data, options = {
             node.y = Math.max(nodeRadius, Math.min(height - nodeRadius, node.y))
             context.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2)
             context.fill();
-            let stroke = node.stroke ?? options.node?.border
+            let stroke = node.border ?? options.node?.border
             if (stroke) {
                 context.strokeStyle = typeof stroke === 'string' ? stroke : '#ffffff';
                 context.stroke();

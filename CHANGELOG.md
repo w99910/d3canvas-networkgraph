@@ -1,5 +1,10 @@
 Major and minor changes are logged here.
 
+## v0.2.3
+
+- Added `node.color` option. 
+- Update `README.md`
+
 ## v0.2.2
 
 - Change `update` behavior. Now `data` is not mandatory. It can pass data as `null` and will just update options. 

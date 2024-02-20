@@ -26,6 +26,8 @@ Blazing faster than HTML SVG based network-graph ⚡⚡⚡⚡
 - [Usage](#usage)
     - [Import the library](#import-the-library)
     - [Initialise](#initialise-graph)
+    - [Node](#node)
+    - [Link](#link)
     - [Options](#options)
 - [ChangeLog](#changelog)
 - [License](#license)
@@ -40,7 +42,7 @@ npm install d3canvas-networkgraph
 ## Updating
 
 ```bash
-
+npm install d3canvas-networkgraph@latest
 ```
 
 ## Basic Example
@@ -129,6 +131,46 @@ let links = [{
 }]
 ```
 
+### Node
+- id (required)
+- color ( optional ): Specify color of the node. Providing this attribute will overwrite the `options.node.color`.
+- label ( optional ): Specify label of the node. Providing this attribute will overwrite the `options.node.label`.
+- radius ( optional ): Specify radius of the node. Providing this attribute will overwrite the `options.node.radius`.
+- border ( optional ):  Specify border color of the node. Providing this attribute will overwrite the `options.node.border`
+- tooltip ( optinal ): Specify custom tooltip text of the node. Providing this attribute will overwrite the `options.node.tooltip`.
+- tooltipFontSize ( optional ): Specify font size of tooltip. Providing this attribute will overwrite the `options.node.tooltipFontSize`.
+
+```js
+// Example node structure
+node = {
+  id: 1,
+  color: 'white',
+  label: '1',
+  radius: 5,
+  border: 'blue',
+  tooltip: 'hello world from node 1',
+  tooltipFontSize: 12,
+}
+```
+
+### Link
+
+- source ( required ): `id` of the source node.
+- target ( required ): `id` of the target node.
+- width ( optional ): Specify width of link. 
+- color ( optional ): Specify color of link
+
+```js
+// Example link structure
+link = {
+  source: 1,
+  target: 2,
+  width: 4,
+  color: 'red'
+}
+```
+
+
 - ### Options
   Default option values are:
 
@@ -143,6 +185,7 @@ options = {
         onResize: null,
     },
     node: {
+        color: null,
         border: true,
         radius: 10,
         borderWidth: 1,
@@ -196,6 +239,22 @@ options = {
               .restart()
     ```  
 - node:
+    - **color** ( string| null| Function)
+
+      Specify node color. Eg.
+      ```js
+      // color as function
+      node: {
+        color: (node, index) => node.color,
+        ...
+      }
+
+      // color as static color
+      node: {
+        color: 'black' // or '#333'
+      }
+      ```
+
     - **stroke** (boolean| string| null)
 
       Enable stroke on node. Can specify `boolean` or `string`. If it is `string`, it
